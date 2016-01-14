@@ -51,13 +51,768 @@
     </section>
 
     <section>
-      <h2>About Me</h2>
+      <section>
+        <h2>About Me</h2>
+      </section>
+      <section>
+        <h2>I PHP:</h2>
+        <h4>First dabbled in college (early-2000s).</h4>
+        <h4>Personal projects while masquerading as an aerospace engineer.</h4>
+        <h4>Full stack development for last several years.</h4>
+      </section>
+      <section>
+        <h2>For Money:</h2>
+        <h3>Senior Software Engineer</h3>
+        <h3><a href="http://varsitynewsnetwork.com">Varsity News Network</a></h3>
+        <p>(We write our tests with Peridot!)</p>
+      </section>
+      <section>
+        <h2>For Free:</h2>
+        <h3>Co-Author of <a href="https://peridot-php.github.io/">Peridot</a></h3>
+        <p style="margin-left: -24px; margin-right: -24px;">The highly extensible, highly enjoyable, BDD testing framework for PHP.</p>
+        <p>(It's this presentation!)</p>
+      </section>
     </section>
 
     <section>
-      <h2>Peridot</h2>
+      <section>
+        <h2>Peridot</h2>
+        <p style="margin-left: -24px; margin-right: -24px;">The highly extensible, highly enjoyable, BDD testing framework for PHP.</p>
+      </section>
+      <section>
+        <h2>What is BDD?</h2>
+        <h4>(Behavior Driven Development)</h4>
+      </section>
+      <section>
+        <h3>BDD is an extension of TDD</h3>
+        <ul>
+          <li class="fragment">Uses TDD techniques and principles.</li>
+          <li class="fragment">Tells a story about "behavior".</li>
+          <li class="fragment">Places emphasis on the "user".</li>
+          <li class="fragment">Spoken with a universal language.</li>
+        </ul>
+      </section>
+      <section>
+        <h3>BDD with Peridot</h3>
+        <ul>
+          <li class="fragment">Simple, discrete specifications (requirements).</li>
+          <li class="fragment">Tests for every level (integration/functional/unit).</li>
+          <li class="fragment">Plain English language.</li>
+          <li class="fragment">Easily understood results.</li>
+        </ul>
+      </section>
+      <section>
+        <h2>Origin</h2>
+        <p class="fragment"><a href="https://twitter.com/scaturr">Brian Scaturro</a> + <a href="https://twitter.com/austinsmorris">Austin Morris</a> + <a href="https://jasmine.github.io/">Jasmine</a></p>
+        <p class="fragment">Why can't writing tests be this enjoyable in PHP?</p>
+        <p class="fragment">Coffee + TDD: By Example (Kent Beck).</p>
+        <p class="fragment">A simple, highly extensible architecture emerged.</p>
+      </section>
     </section>
 
+    <section>
+      <section>
+        <h2>Let's go!</h2>
+      </section>
+      <section>
+        <h3>Installation - Composer</h3>
+        <p>composer.json:</p>
+        <pre><code>
+          "require-dev": {
+            "peridot-php/peridot": "~1.0"
+          }
+        </code></pre>
+        <pre><code>
+          $ vendor/bin/peridot
+        </code></pre>
+      </section>
+    </section>
+
+    <section>
+      <section>
+        <h2>Writing Tests</h2>
+      </section>
+      <section>
+        <h4>describe/it</h4>
+        <pre><code>
+          &lt;?php
+
+          describe('A thing', function () {
+            // I am a test suite!
+
+            it('should do a thing', function () {
+              // I am a test!
+            });
+
+            it('should do another thing', function () {
+              // I am another test!
+            });
+          });
+        </code></pre>
+      </section>
+      <section>
+        <p>$ vendor/bin/peridot</p>
+        <pre>
+          A thing
+            ✓ should do a thing
+            ✓ should do another thing
+
+
+          2 passing (0 ms)
+        </pre>
+      </section>
+      <section>
+        <h4>Setup and tear down.</h4>
+        <pre><code>
+          &lt;?php
+
+          describe('A thing', function () {
+            // I am a suite!
+
+            beforeEach(function () {
+              // Somebody set up us the bomb!
+            });
+
+            it('should do a thing', function () {
+              // I am a test!
+            });
+
+            // more it()...
+
+            afterEach(function () {
+              // Tear down!
+            });
+          });
+        </code></pre>
+      </section>
+      <section>
+        <h4>Nested describes (or contexts).</h4>
+          <pre><code>
+            describe('A thing', function () {
+              // I am a test suite!
+
+              beforeEach(function () {
+                // Somebody set up us the bomb!
+              });
+
+              context('in this context', function () {
+                // I am another test suite!
+
+                beforeEach(function () {
+                  // I only run in this context
+                });
+
+                it('should do a very specific thing', function () {
+                  // Both beforeEach() functions were executed before me!
+                });
+              });
+            });
+          </code></pre>
+      </section>
+      <section>
+        <h4>Pending tests.</h4>
+          <pre><code>
+            describe('A thing', function () {
+              xit('should do a thing', function () {
+                // This test is skipped!
+              });
+
+              xcontext('in this context', function () {
+                // Every test in this suite is skipped (same as xdescribe)
+
+                it('should do a very specific thing', function () {
+                  // I got skipped!
+                });
+              });
+            });
+          </code></pre>
+      </section>
+      <section>
+        <h4>Tests inherit scope from the test suite(s).</h4>
+          <pre><code style="max-height: 500px;">
+            describe('A thing', function () {
+              beforeEach(function () {
+                $this->foo = 'bar';
+              });
+
+              context('in this context', function () {
+                beforeEach(function () {
+                  $this->bar = 'baz';
+                });
+
+                it('should do a very specific thing', function () {
+                  assert($this->foo == 'bar'); // pass!
+                  assert($this->bar == 'baz'); // pass!
+                });
+              });
+
+              it('should do a thing', function () {
+                assert($this->foo == 'bar'); // pass!
+                assert($this->bar == 'baz'); // FAIL!
+              });
+            });
+          </code></pre>
+      </section>
+      <section>
+        <h4>Waaaaat?</h4>
+        <ul>
+          <li class="fragment">Peridot just calls functions in the defined order</li>
+          <li class="fragment">There is a single global context (test suite)</li>
+          <li class="fragment">describe() and context() create test suites</li>
+          <li class="fragment">it() creates tests</li>
+          <li class="fragment">Closure::bind() links tests (leaf) to suites (composite)</li>
+          <li class="fragment">Tests pass unless they throw an exception</li>
+        </ul>
+      </section>
+      <section>
+        <h4>Take another look..</h4>
+          <pre><code style="max-height: 500px;">
+            describe('A thing', function () {
+              beforeEach(function () {
+                $this->foo = 'bar';
+              });
+
+              context('in this context', function () {
+                beforeEach(function () {
+                  $this->bar = 'baz';
+                });
+
+                it('should do a very specific thing', function () {
+                  assert($this->foo == 'bar'); // pass!
+                  assert($this->bar == 'baz'); // pass!
+                });
+              });
+
+              it('should do a thing', function () {
+                assert($this->foo == 'bar'); // pass!
+                assert($this->bar == 'baz'); // FAIL!
+              });
+            });
+          </code></pre>
+      </section>
+      <section>
+        <h4>Tips:</h4>
+        <ul>
+          <li class="fragment">Use a "specs" directory (configurable).</li>
+          <li class="fragment">Use the .spec.php file extension (configurable).</li>
+          <li class="fragment">Mirror your src/.</li>
+        </ul>
+      </section>
+    </section>
+
+    <section>
+      <h2>Extending Peridot</h2>
+    </section>
+
+    <section>
+      <section>
+        <h2>Configuration</h2>
+      </section>
+      <section>
+        <h4>Peridot is a Symfony Console Application</h4>
+        <p><i>"The Console component eases the creation of beautiful and testable command line interfaces."</i></p>
+        <p class="fragment"><b>Abstractions for:</b></p>
+        <ul>
+          <li class="fragment">CLI arguments</li>
+          <li class="fragment">CLI options</li>
+          <li class="fragment">CLI output</li>
+        </ul>
+      </section>
+      <section>
+        <h4>$ vendor/bin/peridot -h</h4>
+        <pre><code>
+Usage:
+peridot [options] [files]
+
+Options:
+-g, --grep=GREP                    Run tests matching &lt;pattern&gt; (default: *.spec.php)
+-C, --no-colors                    Disable output colors
+--force-colors                     Force output colors
+-r, --reporter=REPORTER            Select which reporter to use (default: spec)
+-b, --bail                         Stop on failure
+-c, --configuration=CONFIGURATION  A php file containing peridot configuration
+--reporters                        List all available reporters
+-V, --version                      Display the Peridot version number
+-h, --help                         Display this help message.
+        </code></pre>
+      </section>
+      <section>
+        <h4>peridot.php</h4>
+        <p>Configure your PHP tests with <b>PHP!</b></p>
+        <p>Even this is configurable:</p>
+        <pre><code>$ vendor/bin/peridot -c foo/bar.php</code></pre>
+        <pre><code>$ vendor/bin/peridot --configuration foo/bar.php</code></pre>
+      </section>
+      <section>
+        <h4>peridot.php</h4>
+        <pre><code>
+          &lt;?php
+
+          use Evenement\EventEmitterInterface;
+
+          /**
+          * Configure peridot.
+          *
+          * @param EventEmitterInterface $eventEmitter
+          */
+          return function (EventEmitterInterface $eventEmitter) {
+            // Everything that is cool and rad goes here!
+          };
+        </code></pre>
+      </section>
+    </section>
+
+    <section>
+      <section>
+        <h2>Events!</h2>
+      </section>
+      <section>
+        <h4>EventEmitter</h4>
+        <p>Peridot has a single application event manager driving and providing access to the entire testing lifecyle.</p>
+        <a href="https://github.com/igorw/evenement">Événement</a>
+        <pre><code>
+          interface EventEmitterInterface
+          {
+            public function on($event, callable $listener);
+            public function once($event, callable $listener);
+            public function removeListener($event, callable $listener);
+            public function removeAllListeners($event = null);
+            public function listeners($event);
+            public function emit($event, array $arguments = []);
+          }
+        </code></pre>
+      </section>
+      <section>
+        <h4>Peridot Events</h4>
+        <ul>
+          <li>'peridot.start' - Define additional CLI args/options</li>
+          <li>'peridot.configure' - Override default config</li>
+          <li>'suite.start' - A suite starts</li>
+          <li>'test.passed' - A test passed</li>
+          <li>'test.failed' - A test failed</li>
+          <li><a href="http://peridot-php.github.io/events.html">more...</a></li>
+        </ul>
+      </section>
+      <section>
+        <h4>peridot.php</h4>
+        <p>Set the default path:</p>
+        <pre><code>
+          use Evenement\EventEmitterInterface;
+          use Peridot\Console\Environment;
+
+          return function (EventEmitterInterface $eventEmitter) {
+            $eventEmitter->on('peridot.start', function (Environment $environment) {
+              $environment->getDefinition()->getArgument('path')->setDefault('specs');
+            });
+          };
+        </code></pre>
+      </section>
+      <section>
+        <h4>Create your own events!</h4>
+        <pre><code>
+          use Evenement\EventEmitterInterface;
+          use Peridot\Core\Test;
+
+          return function (EventEmitterInterface $eventEmitter) {
+            $eventEmitter->on('test.passed', function (Test $test) use ($eventEmitter) {
+              $eventEmitter->emit('wackyEvent', [$test]);
+            });
+
+            $eventEmitter->on('wackyEvent', function (Test $test) {
+              // do something wacky!
+            });
+          };
+        </code></pre>
+      </section>
+    </section>
+
+    <section>
+      <section>
+        <h2>Plugins!</h2>
+      </section>
+      <section>
+        <h4>What is a Peridot plugin?</h4>
+        <ul>
+          <li>It's a thing that does a thing.</li>
+          <li>It makes Peridot do more that it can do without it.</li>
+          <li>It is added to the config file (peridot.php).</li>
+          <li>There is a "preferred" style.</li>
+        </ul>
+      </section>
+      <section>
+        <h4>MyPlugin</h4>
+        <pre><code style="max-height: 500px;">
+          class MyPlugin
+          {
+            protected $emitter;
+
+            public function __construct(EventEmitterInterface $emitter)
+            {
+              $this->emitter = $emitter;
+              $this->listen();
+            }
+
+            protected function listen()
+            {
+              $this->emitter->on('suite.start', [$this, 'onSuiteStart']);
+            }
+
+            public function onSuiteStart(Suite $suite)
+            {
+              // do something when a suite starts
+            }
+          }
+        </code></pre>
+      </section>
+      <section>
+        <h4>Register your plugin:</h4>
+        <pre><code>
+          use Evenement\EventEmitterInterface;
+
+          return function (EventEmitterInterface $eventEmitter) {
+            new MyPlugin($eventEmitter);
+          };
+        </code></pre>
+      </section>
+      <section>
+        <h4>Peridot Watcher Plugin</h4>
+        <pre><code>
+          use Evenement\EventEmitterInterface;
+          use Peridot\Plugin\Watcher\WatcherPlugin;
+
+          return function(EventEmitterInterface $emitter) {
+            $watcher = new WatcherPlugin($emitter);
+            $watcher->track(__DIR__ . '/src');
+          };
+        </code></pre>
+      </section>
+      <section>
+        <h4>Peridot Concurrency Plugin</h4>
+        <pre><code>
+          use Evenement\EventEmitterInterface;
+          use Peridot\Concurrency\ConcurrencyPlugin;
+
+          return function (EventEmitterInterface $emitter) {
+            new ConcurrencyPlugin($emitter);
+          };
+        </code></pre>
+        <pre><code>
+          $ vendor/bin/peridot --concurrent
+        </code></pre>
+      </section>
+    </section>
+
+    <section>
+      <section>
+        <h2>Scopes!</h2>
+      </section>
+      <section>
+        <h4>Plugins can manipulate scope!</h4>
+        <pre><code>
+          class MyScopePlugin
+          {
+            // ...
+
+            protected function listen()
+            {
+              $this->emitter->on('suite.start', [$this, 'onSuiteStart']);
+            }
+
+            public function onSuiteStart(Suite $suite)
+            {
+              $suite->getScope()->peridotAddChildScope(new MyScope());
+            }
+          }
+        </code></pre>
+      </section>
+      <section>
+        <h4>Add things to $this:</h4>
+        <pre><code>
+          class MyScope
+          {
+            // tests can access $this->thingy
+            public $thingy;
+
+            // tests can call $this->doThingyMagic()
+            public function doThingyMagic()
+            {
+              // magic happens!
+            }
+          }
+        </code></pre>
+      </section>
+      <section>
+        <h4>Always available:</h4>
+        <pre><code>
+          use Evenement\EventEmitterInterface;
+
+          return function (EventEmitterInterface $eventEmitter) {
+            new MyScopePlugin($eventEmitter);
+          };
+        </code></pre>
+      </section>
+      <section>
+        <h4>Use on test by test basis:</h4>
+        <pre><code>
+          describe('A thing', function () {
+            $scope = new MyScope();
+            $this->peridotAddChildScope($scope);
+
+            it('should do a thing', function() {
+              $this->doThingyMagic()
+            });
+          }
+        </code></pre>
+      </section>
+      <section>
+        <h4>Prophecy Plugin</h4>
+        <pre><code>
+          describe('A thing', function() {
+            beforeEach(function () {
+              // get a \Prophecy\Prophet
+              $prophet = $this->getProphet()
+            )};
+          });
+        </code></pre>
+        <pre><code>
+          describe('My\Thing', function() {
+            it('should be a Thing', function() {
+              assert($this->subject->reveal() instanceof Thing);
+            });
+          });
+        </code></pre>
+      </section>
+      <section>
+        <h4>Doctrine Plugin</h4>
+        <pre><code>
+          use Evenement\EventEmitterInterface;
+          use Peridot\Plugin\Doctrine\DoctrinePlugin;
+          use Peridot\Plugin\Doctrine\EntityManager\EntityManagerService;
+
+          return function (EventEmitterInterface $eventEmitter) {
+            new DoctrinePlugin($eventEmitter, new EntityManagerService());
+          };
+        </code></pre>
+        <pre><code>
+          beforeEach(function () {
+            // I can create an entity manager!
+            $this->entityManager = $this->createEntityManager();
+            $this->repository = new MyRepository($this->entityManager);
+          });
+        </code></pre>
+      </section>
+      <section>
+        <h4>Pro Tip 1:</h4>
+        <p>Customize your entity manager creation</p>
+        <pre><code>
+          use Doctrine\DBAL\Types\Type;
+
+          Type::addType('datetimeutc', 'ASM\Doctrine\DBAL\Types\DateTimeUTCType');
+          $factory = function () {
+            // do something that creates an entity manager ..
+            return $entityManager;
+          };
+
+          $service = (new EntityManagerService())->setEntityManagerFactory($factory);
+          new DoctrinePlugin($eventEmitter, $service);
+        </code></pre>
+      </section>
+      <section>
+        <h4>Pro Tip 2:</h4>
+        <p>Copying is faster than creating</p>
+        <pre><code>
+          use Nelmio\Alice\Fixtures;
+          use Peridot\Plugin\Doctrine\EntityManager\SchemaService;
+
+          // create the initial sqlite db used for testing
+          $eventEmitter->on('runner.start', function () use ($factory) {
+            $entityManager = $factory();
+            $schemaService = new SchemaService($entityManager);
+            $schemaService->dropDatabase()->createDatabase();
+
+            Fixtures::load([__DIR__ . '/path/to/fixture.yml'], $entityManager);
+            // load more fixtures...
+
+            copy(__DIR__ . '/tmp/db.db', __DIR__ . '/tmp/clean.db');
+          });
+
+          // create a clean copy of the db before an entity manager is created
+          $eventEmitter->on('doctrine.entityManager.preCreate', function () {
+            copy(__DIR__ . '/tmp/clean.db', __DIR__ . '/tmp/db.db');
+          });
+        </code></pre>
+      </section>
+      <section>
+        <h4>HttpKernel Plugin</h4>
+        <pre><code>
+        use Evenement\EventEmitterInterface;
+        use Peridot\Plugin\HttpKernel\HttpKernelPlugin;
+
+        return function (EventEmitterInterface $eventEmitter) {
+          //the second arg expects HttpKernelInterface or a function that returns one
+          HttpKernelPlugin::register($eventEmitter, include __DIR__ . '/app.php');
+        };
+        </code></pre>
+        <pre><code>
+        describe('My API', function() {
+          describe('/my-route', function() {
+            it('should return data', function() {
+              $this->client->request('GET', '/my-route');
+              $data = json_decode($this->client->getResponse()->getContent(), true);
+
+              // assert($data blah blah blah...
+            });
+          });
+        });
+        </code></pre>
+      </section>
+    </section>
+
+    <section>
+      <section>
+        <h2>Reporters!</h2>
+      </section>
+
+      <section>
+        <h4>Register with the 'peridot.reporters' event:</h4>
+        <pre><code>
+class DotReporterPlugin
+{
+  // ...
+
+  protected function listen()
+  {
+    $this->emitter->on('peridot.reporters', [$this, 'onPeridotReporters']);
+  }
+
+  public function onPeridotReporters(InputInterface $input, ReporterFactory $reporters)
+  {
+    $reporters->register('dot', 'dot matrix', 'Peridot\Reporter\Dot\DotReporter');
+  }
+}
+        </code></pre>
+      </section>
+      <section>
+        <h4>Listen to the test events:</h4>
+        <pre><code>
+          namespace Peridot\Reporter\Dot;
+
+          use Peridot\Reporter\AbstractBaseReporter;
+
+          class DotReporter extends AbstractBaseReporter
+          {
+            public function init()
+            {
+              $this->eventEmitter->on('test.passed', [$this, 'onTestPassed']);
+              $this->eventEmitter->on('test.failed', [$this, 'onTestFailed']);
+              $this->eventEmitter->on('test.pending', [$this, 'onTestPending']);
+              $this->eventEmitter->on('runner.end', [$this, 'onRunnerEnd']);
+            }
+          }
+        </code></pre>
+      </section>
+      <section>
+        <h4>Dot Reporter</h4>
+        <pre><code>
+          use Peridot\Reporter\Dot\DotReporterPlugin;
+
+          return function(EventEmitterInterface $emitter) {
+            new DotReporterPlugin($emitter);
+          };
+        </code></pre>
+        <pre><code>
+          $ vendor/bin/peridot -r dot
+        </code></pre>
+      </section>
+      <section>
+        <h4>Code Coverage Reporters</h4>
+        <pre><code>
+          use Evenement\EventEmitterInterface;
+          use Peridot\Reporter\CodeCoverageReporters;
+
+          return function (EventEmitterInterface $eventEmitter) {
+            (new CodeCoverageReporters($eventEmitter))->register();
+
+            $eventEmitter->on('code-coverage.start', function ($reporter) {
+              $reporter->addDirectoryToWhitelist(__DIR__ . '/src');
+            });
+          };
+        </code></pre>
+        <pre><code>
+          $ vendor/bin/peridot -r html-code-coverage --code-coverage-path coverage/
+        </code></pre>
+      </section>
+    </section>
+
+    <section>
+      <section>
+        <h2>More!</h2>
+      </section>
+      <section>
+        <h2>Leo!</h2>
+        <p>An assertion library to complement Peridot.</p>
+        <pre><code>
+          "require-dev": {
+            "peridot-php/leo": "~1.0",
+            "peridot-php/peridot": "~1.0"
+          }
+        </code></pre>
+      </section>
+      <section>
+        <h4>Assert</h4>
+        <pre><code>
+          use Peridot\Leo\Interfaces\Assert;
+
+          $assert = new Assert();
+          $assert->typeOf('string', 'hello', 'is string');
+          $assert->operator(5, '<', 6, 'should be less than');
+          $assert->isResource(tempfile());
+          $assert->throws(function() {
+            throw new Exception("exception");
+          }, 'Exception');
+        </code></pre>
+      </section>
+      <section>
+        <h4>Expect</h4>
+        <pre><code>
+          expect([1,2,3])->to->have->length(3);
+          expect($name)->to->be->a('string')
+          expect($object)->to->have->property('name', 'brian');
+          expect(function() {})->to->satisfy('is_callable');
+          expect(5)->to->be->above(4)
+          expect($num)->to->be->within(5, 10);
+          expect('hello')->to->match('/^he/');
+        </code></pre>
+      </section>
+      <section>
+        <h4>Extending Leo</h4>
+        <pre><code>
+          use Evenement\EventEmitterInterface;
+          use Peridot\Leo\HttpFoundation\LeoHttpFoundation;
+          use Peridot\Leo\Leo;
+
+          return function (EventEmitterInterface $eventEmitter) {
+            Leo::assertion()->extend(new LeoHttpFoundation());
+          };
+        </code></pre>
+        <pre><code>
+          expect($response)->to->allow(['POST', 'GET']);
+          expect($response)->to->have->status(200);
+          expect($response)->json->to->have->property('name');
+        </code></pre>
+      </section>
+    </section>
+    <section>
+      <section>
+        <h2>Contributing</h2>
+        <ul>
+          <li class="fragment">Report bugs!</li>
+          <li class="fragment">Request features!</li>
+          <li class="fragment">Fork and pull!</li>
+          <li class="fragment">Become a maintainer!</li>
+        </ul>
+      </section>
+    </section>
     <section>
       <h2>Questions?</h2>
     </section>
